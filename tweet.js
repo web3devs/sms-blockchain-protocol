@@ -1,11 +1,11 @@
 // get Web3 for rinkeby
-const getWeb3 = require('getWeb3');
+const getWeb3 = require("./getWeb3");
 
-let Web3 = getWeb3('https://rinkeby.infura.io');
+let Web3 = getWeb3("https://rinkeby.infura.io");
 
 // get abi and address
-let abi = '';
-let address = '';
+let abi = "";
+let address = "";
 
 let contract = Web3.eth.contract(abi).at(address);
 
@@ -14,10 +14,10 @@ function tweet(reqArray) {
   let message = reqArray[1];
   contract.tweet(message, (err, res) => {
     if (err) {
-      console.log('Error calling tweet function ' + err)
+      console.log("Error calling tweet function " + err);
     } else {
-      console.log('Message sent.');
-    };
+      console.log("Message sent.");
+    }
   });
-};
+}
 module.exports = tweet;
