@@ -21,7 +21,7 @@ app.post('/sms', (req, res) => {
   }
   console.log('req', req.body.Body); // parse for cmd and args
 
-  let reqArray = req.body.Body.split(' '); // space or comma?
+  let reqArray = req.body.Body.split(','); // space or comma?
 
   let command = reqArray[0];
 
@@ -35,12 +35,27 @@ app.post('/sms', (req, res) => {
 
     case 'tweet':
       // use tweet contract
-      tweet(reqArray);
+      tweet(reqArray, (err, res) => {
+        if (err) {
+          console.log('Error calling tweet function ' + err);
+          twiml.message('Error: ', err);
+        } else {
+          console.log('Tweet message sent.');
+          twiml.message('Success: ', res); // what is res?
+        };
+      });
       break;
 
     case 'rhombus':
       // subscribe on unsubscribe to oracles - needs to forward data on
-      rhombus(reqArray);
+      rhombus(reqArray, (err, res) => {
+        if (err) {
+          console.log('Error calling tweet function ' + err);
+          twiml.message('Error: ', err);
+        } else {
+          // console.log('Message sent.');
+        };
+      });
       break;
 
     case 'salt':
@@ -51,13 +66,16 @@ app.post('/sms', (req, res) => {
 
     case 'xdai':
       // can send funds or call contract functions
-      try {
-        xdaiSend(reqArray, user);
+      xdaiSend(reqArray, user, (err, res) => {
+        if (err) {
+          console.log('Error calling tweet function ' + err)
+        } else {
+          console.log('Message sent.');
+        };
+      });
+      break;
 
-      } catch(err) {
-        twiml.message('Error: ', err);
-      };
-  }
+  };
 
   // response
 
