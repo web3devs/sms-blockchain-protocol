@@ -4,16 +4,23 @@ const MessagingResponse = require('twilio').twiml.MessagingResponse;
 const bodyParser = require('body-parser');
 require('dotenv').config();
 
-// const grid = require('./grid');
 const tweet = require('./tweet');
+const coincap = require('./coincap');
 
 const app = express();
 
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({ extended: true, type: '*/*' }));
 
-app.post('/sms', (req, res) => {
+function respond(twiml, res) {
+  console.log('TWIML.TOSTRING()', twiml.toString());
+  res.writeHead(200, { 'Content-Type': 'text/xml' });
+  res.end(twiml.toString());
+}
+
+app.post('/sms', (req, response) => {
   // request
-  console.log(req.body);
+  console.log(req.headers);
+  // console.log(req.body);
   // let user = db.find({ phoneNumber: req.body.From });
   let user = {
     // hard code for now
@@ -21,7 +28,7 @@ app.post('/sms', (req, res) => {
     xdaiAddress: '',
     btcAddress: '',
   };
-  console.log('req', req.body.Body); // parse for cmd and args
+  // console.log('req', req.body.Body); // parse for cmd and args
 
   let reqArray = req.body.Body.split(','); // space or comma?
 
@@ -45,7 +52,8 @@ app.post('/sms', (req, res) => {
           console.log('Tweet message sent.');
           console.log('RES', res);
           // twiml.message(res.toString()); // does not work
-          twiml.message('Tweet sent!'); // does not work
+          twiml.message('Tweet sent!' + res); // does not work
+          respond(twiml, response);
         }
       });
       break;
@@ -69,11 +77,17 @@ app.post('/sms', (req, res) => {
           console.log('Error calling tweet function ' + err);
         } else {
           console.log('Message sent.');
-          twiml.message(res);
+          console.log('RES.BODY', res.body);
+          // console.log('RES.BODY.TOSTRING()', res.body.toString());
+          // console.log(`${res.body}`);
+          console.log('JSON.STRINGIFY(RES.BODY)', JSON.stringify(res.body));
+          twiml.message(JSON.stringify(res.body));
+          respond(twiml, response);
         }
       });
+      break;
 
-    case 'shapeshift':
+    // case 'shapeshift':
 
     // case 'ethql':
 
@@ -89,14 +103,17 @@ app.post('/sms', (req, res) => {
         }
       });
       break;
+
+    default:
+      twiml.message('Error. First word must be a command.');
+      respond(twiml, response);
   }
+});
 
-  // response
-
-  // twiml.message('The Robots are coming! Head for the hills!');
-
-  res.writeHead(200, { 'Content-Type': 'text/xml' });
-  res.end(twiml.toString());
+app.post('/meerkat', (req, res) => {
+  console.log('REQ', req.headers);
+  console.log(req.body); // not showing - empty object
+  res.sendStatus(200);
 });
 
 http.createServer(app).listen(1337, () => {
