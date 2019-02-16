@@ -10,7 +10,7 @@ contract FundRaiser is RhombusClient {
     }
 
     Donation[] public donations;
-    address public constant alice =  0x31EFd75bc0b5fbafc6015Bd50590f4fDab6a3F22;
+    /* address public constant alice =  0x31EFd75bc0b5fbafc6015Bd50590f4fDab6a3F22; */
 
     event Raised(address donor, uint USDraised);
 
