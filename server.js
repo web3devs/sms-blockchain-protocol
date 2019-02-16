@@ -3,8 +3,8 @@ const express = require('express');
 const MessagingResponse = require('twilio').twiml.MessagingResponse;
 const bodyParser = require('body-parser');
 
-const grid = require('grid');
-const tweet = require('tweet');
+const grid = require('./grid');
+const tweet = require('./tweet');
 
 const app = express();
 

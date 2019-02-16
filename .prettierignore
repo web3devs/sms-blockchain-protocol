@@ -1,0 +1,9 @@
+/.git
+/dist
+/.env
+/.env.dist
+node_modules
+package.json
+.md
+.yml
+.json
