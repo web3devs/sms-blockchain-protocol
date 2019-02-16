@@ -2,8 +2,9 @@ const http = require('http');
 const express = require('express');
 const MessagingResponse = require('twilio').twiml.MessagingResponse;
 const bodyParser = require('body-parser');
+require('dotenv').config();
 
-const grid = require('./grid');
+// const grid = require('./grid');
 const tweet = require('./tweet');
 
 const app = express();
@@ -12,11 +13,11 @@ app.use(bodyParser.urlencoded({ extended: false }));
 
 app.post('/sms', (req, res) => {
   // request
-  console.log(req.body.From); // look up user
+  console.log(req.body);
   // let user = db.find({ phoneNumber: req.body.From });
   let user = {
     // hard code for now
-    rinkebyAddress: '',
+    rinkebyAddress: '0xb37A07ffcd1ec4FBc77583CC176e0809b40ff710',
     xdaiAddress: '',
     btcAddress: '',
   };
@@ -42,7 +43,9 @@ app.post('/sms', (req, res) => {
           twiml.message('Error: ', err);
         } else {
           console.log('Tweet message sent.');
-          twiml.message('Success: ', res); // what is res?
+          console.log('RES', res);
+          // twiml.message(res.toString()); // does not work
+          twiml.message('Tweet sent!'); // does not work
         }
       });
       break;
@@ -55,6 +58,7 @@ app.post('/sms', (req, res) => {
           twiml.message('Error: ', err);
         } else {
           // console.log('Message sent.');
+          twiml.message(res);
         }
       });
       break;
@@ -65,6 +69,7 @@ app.post('/sms', (req, res) => {
           console.log('Error calling tweet function ' + err);
         } else {
           console.log('Message sent.');
+          twiml.message(res);
         }
       });
 
@@ -80,6 +85,7 @@ app.post('/sms', (req, res) => {
         } else {
           console.log('xDai sent!');
           console.log('res', res);
+          twiml.message(res);
         }
       });
       break;
