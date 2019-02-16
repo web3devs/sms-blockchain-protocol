@@ -11,3 +11,5 @@ command, contract, function, arg
 ### Poa xDai
 
 `xdai, function, toAddress, value`
+
+command, arg, function, arg
