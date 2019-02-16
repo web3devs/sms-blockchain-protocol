@@ -11,6 +11,10 @@ const app = express();
 
 app.use(bodyParser.urlencoded({ extended: false }));
 
+app.get('/', function(req, res) {
+  res.send('Hello World');
+});
+
 app.post('/sms', (req, res) => {
   // request
   console.log(req.body);
