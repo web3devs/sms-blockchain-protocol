@@ -6,4 +6,4 @@ Text messages are sent to the phone number for the server. The format is CSV.
 
 `eth, contract 1, tweet, message`
 
-command, arg, function, arg 
+command, arg, function, arg
