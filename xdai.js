@@ -6,10 +6,10 @@ let Web3 = getWeb3('https://dai.poa.network');
 // contract
 
 // get abi and address
-let abi = '';
-let address = '';
-
-let contract = Web3.eth.contract(abi).at(address);
+// let abi = '';
+// let address = '';
+//
+// let contract = Web3.eth.contract(abi).at(address);
 
 // call tweet function
 // export function tweet(reqArray) {
@@ -24,20 +24,14 @@ let contract = Web3.eth.contract(abi).at(address);
 // };
 
 // send
-export function send(reqArray, user) {
+export function send(reqArray, user, cb) {
+  // reqArray = [xdai, send, toAddress, value]
   let transactionObject = {
     from: user.xdaiAddress,
-    to: '',
-    value: '',
-    gas: ''
+    to: reqArray[2],
+    value: reqArray[3],
+    gas: 3000000,
   };
 
-  web3.eth.sendTransaction(transactionObject, (err, res) => {
-    if (err) {
-      console.log('Error calling tweet function ' + err)
-      throw new Error(err);
-    } else {
-      console.log('Message sent.');
-    };
-  });
+  web3.eth.sendTransaction(transactionObject, cb);
 }

@@ -1,6 +1,7 @@
 {
   "name": "sms-blockchain-protocol",
   "version": "0.1.0",
+  "repository": "https://github.com/web3devs/sms-blockchain-protocol",
   "scripts": {
     "build": "npm run clean && npm run build-babel && cp src/emails/*.hbs dist/emails/",
     "build-babel": "babel src -d dist",
@@ -17,6 +18,7 @@
     "body-parser": "^1.18.3",
     "dotenv": "^6.1.0",
     "express": "^4.16.4",
+    "superagent": "^4.1.0",
     "twilio": "3.28.0"
   },
   "devDependencies": {
