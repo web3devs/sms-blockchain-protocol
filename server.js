@@ -5,6 +5,7 @@ const bodyParser = require('body-parser');
 require('dotenv').config();
 
 // const grid = require('./grid');
+const msgConf = require('./msgConf');
 const tweet = require('./tweet');
 
 const app = express();
@@ -15,9 +16,11 @@ app.get('/', function(req, res) {
   res.send('Hello World');
 });
 
-app.post('/sms', (req, res) => {
+app.post('/sms', (request, res) => {
+  let req = request.body;
+
   // request
-  console.log(req.body);
+  console.log(req);
   // let user = db.find({ phoneNumber: req.body.From });
   let user = {
     // hard code for now
@@ -25,9 +28,9 @@ app.post('/sms', (req, res) => {
     xdaiAddress: '',
     btcAddress: '',
   };
-  console.log('req', req.body.Body); // parse for cmd and args
+  console.log('req', req.Body); // parse for cmd and args
 
-  let reqArray = req.body.Body.split(','); // space or comma?
+  let reqArray = req.Body.split(','); // space or comma?
 
   let command = reqArray[0];
 
@@ -44,12 +47,13 @@ app.post('/sms', (req, res) => {
       tweet(reqArray, (err, res) => {
         if (err) {
           console.log('Error calling tweet function ' + err);
-          twiml.message('Error: ', err);
+          msgConf(req, err, res);
         } else {
           console.log('Tweet message sent.');
           console.log('RES', res);
           // twiml.message(res.toString()); // does not work
-          twiml.message('Tweet sent!'); // does not work
+          // twiml.message('Tweet sent!'); // does not work
+          msgConf(req, err, res); // takes the place of twiml.message()
         }
       });
       break;
