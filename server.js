@@ -7,6 +7,7 @@ require('dotenv').config();
 // const grid = require('./grid');
 const msgConf = require('./msgConf');
 const tweet = require('./tweet');
+const coincap = require('./coincap');
 
 const app = express();
 
@@ -30,7 +31,7 @@ app.post('/sms', (request, res) => {
   };
   console.log('req', req.Body); // parse for cmd and args
 
-  let reqArray = req.Body.split(','); // space or comma?
+  let reqArray = req.Body.split(', '); // space or comma? Both!
 
   let command = reqArray[0];
 

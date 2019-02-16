@@ -2,14 +2,28 @@
 
 Text messages are sent to the phone number for the server. The format is CSV.
 
-### Ethereum (MVP)
+### Tweet (MVP)
 
-`eth, contract 1, tweet, message`
+`tweet, message`
 
-command, contract, function, arg
+command, message
+
+### Coincap (bounty)
+
+`coincap, rates, bitcoin`
+
+command, [rates, exchanges, assets], [bitcoin, ethereum, XRP, lightcoin, EOS, ...]
+
+--- Future ---
 
 ### Poa xDai
 
 `xdai, function, toAddress, value`
 
 command, arg, function, arg
+
+### Ethereum
+
+`eth, contract 1, tweet, message`
+
+command, contract, function, arg
