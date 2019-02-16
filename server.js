@@ -1,77 +1,91 @@
-const http = require("http");
-const express = require("express");
-const MessagingResponse = require("twilio").twiml.MessagingResponse;
-const bodyParser = require("body-parser");
+const http = require('http');
+const express = require('express');
+const MessagingResponse = require('twilio').twiml.MessagingResponse;
+const bodyParser = require('body-parser');
+require('dotenv').config();
 
-// const grid = require("./grid");
-// const tweet = require("./tweet");
+// const grid = require('./grid');
+const tweet = require('./tweet');
 
 const app = express();
 
 app.use(bodyParser.urlencoded({ extended: false }));
 
-app.post("/sms", (req, res) => {
+app.post('/sms', (req, res) => {
   // request
-  console.log(req.body.From); // look up user
+  console.log(req.body);
   // let user = db.find({ phoneNumber: req.body.From });
   let user = {
     // hard code for now
-    rinkebyAddress: "",
-    xdaiAddress: "",
-    btcAddress: ""
+    rinkebyAddress: '0xb37A07ffcd1ec4FBc77583CC176e0809b40ff710',
+    xdaiAddress: '',
+    btcAddress: '',
   };
-  console.log("req", req.body.Body); // parse for cmd and args
+  console.log('req', req.body.Body); // parse for cmd and args
 
-  let reqArray = req.body.Body.split(","); // space or comma?
+  let reqArray = req.body.Body.split(','); // space or comma?
 
   let command = reqArray[0];
 
   const twiml = new MessagingResponse();
 
   switch (command) {
-    case "grid":
+    case 'grid':
       // use grid +
       grid(reqArray);
       break;
 
-    case "tweet":
+    case 'tweet':
       // use tweet contract
       tweet(reqArray, (err, res) => {
         if (err) {
-          console.log("Error calling tweet function " + err);
-          twiml.message("Error: ", err);
+          console.log('Error calling tweet function ' + err);
+          twiml.message('Error: ', err);
         } else {
-          console.log("Tweet message sent.");
-          twiml.message("Success: ", res); // what is res?
+          console.log('Tweet message sent.');
+          console.log('RES', res);
+          // twiml.message(res.toString()); // does not work
+          twiml.message('Tweet sent!'); // does not work
         }
       });
       break;
 
-    case "rhombus":
+    case 'rhombus':
       // subscribe on unsubscribe to oracles - needs to forward data on
       rhombus(reqArray, (err, res) => {
         if (err) {
-          console.log("Error calling tweet function " + err);
-          twiml.message("Error: ", err);
+          console.log('Error calling tweet function ' + err);
+          twiml.message('Error: ', err);
         } else {
           // console.log('Message sent.');
+          twiml.message(res);
         }
       });
       break;
 
-    case "salt":
+    case 'coincap':
+      coincap(reqArray, (err, res) => {
+        if (err) {
+          console.log('Error calling tweet function ' + err);
+        } else {
+          console.log('Message sent.');
+          twiml.message(res);
+        }
+      });
 
-    case "shapeshift":
+    case 'shapeshift':
 
-    case "ethql":
+    // case 'ethql':
 
-    case "xdai":
+    case 'xdai':
       // can send funds or call contract functions
       xdaiSend(reqArray, user, (err, res) => {
         if (err) {
-          console.log("Error calling tweet function " + err);
+          console.log('Error sending xdai ' + err);
         } else {
-          console.log("Message sent.");
+          console.log('xDai sent!');
+          console.log('res', res);
+          twiml.message(res);
         }
       });
       break;
@@ -81,10 +95,10 @@ app.post("/sms", (req, res) => {
 
   // twiml.message('The Robots are coming! Head for the hills!');
 
-  res.writeHead(200, { "Content-Type": "text/xml" });
+  res.writeHead(200, { 'Content-Type': 'text/xml' });
   res.end(twiml.toString());
 });
 
 http.createServer(app).listen(1337, () => {
-  console.log("Express server listening on port 1337");
+  console.log('Express server listening on port 1337');
 });
