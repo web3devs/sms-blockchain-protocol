@@ -10,7 +10,8 @@
     "lint": "eslint --debug src/",
     "lint:write": "eslint --debug src/ --fix",
     "prettier": "prettier --write src/**/*.js",
-    "start": "node server.js"
+    "start": "node server.js",
+    "test": "node app.js"
   },
   "dependencies": {
     "async": "^2.6.1",

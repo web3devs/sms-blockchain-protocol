@@ -4,6 +4,8 @@ const MessagingResponse = require('twilio').twiml.MessagingResponse;
 const bodyParser = require('body-parser');
 require('dotenv').config();
 
+// const grid = require('./grid');
+const msgConf = require('./msgConf');
 const tweet = require('./tweet');
 const coincap = require('./coincap');
 const shapeshift = require('./shapeshift');
@@ -18,10 +20,13 @@ function respond(twiml, res) {
   res.end(twiml.toString());
 }
 
-app.post('/sms', (req, response) => {
+app.post('/sms', (request, response) => {
+  let req = request.body;
+
   // request
-  console.log(req.headers);
+  console.log(request.headers);
   // console.log(req.body);
+
   // let user = db.find({ phoneNumber: req.body.From });
   // let user = {
   //   // hard code for now
@@ -50,13 +55,14 @@ app.post('/sms', (req, response) => {
       tweet(reqArray, (err, res) => {
         if (err) {
           console.log('Error calling tweet function ' + err);
-          twiml.message('Error: ', err);
+          msgConf(req, err, res);
         } else {
           console.log('Tweet message sent.');
           console.log('RES', res);
-          // twiml.message(res.toString()); // does not work
-          twiml.message('Tweet sent!' + res); // does not work
-          respond(twiml, response);
+
+          // twiml.message('Tweet sent!' + res); // does not work
+          // respond(twiml, response);
+          msgConf(req, err, res); // takes the place of twiml.message()
         }
       });
       break;
@@ -81,8 +87,14 @@ app.post('/sms', (req, response) => {
         } else {
           console.log('Message sent.');
           console.log('RES.BODY', res.body);
-          console.log('JSON.STRINGIFY(RES.BODY)', JSON.stringify(res.body));
-          twiml.message(JSON.stringify(res.body));
+          if (typeof res.body.data !== 'undefined') {
+            twiml.message(
+              `$${parseFloat(res.body.data.rateUsd, 10).toFixed(2)}`,
+            );
+          } else {
+            twiml.message(`Your request didn't match the API`);
+          }
+
           respond(twiml, response);
         }
       });
