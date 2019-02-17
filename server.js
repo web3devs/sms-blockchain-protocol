@@ -21,7 +21,7 @@ function respond(twiml, res) {
 }
 
 app.post('/sms', (request, response) => {
-  let req = request.body;
+  // let req = request.body;
 
   // request
   console.log(request.headers);
@@ -36,7 +36,7 @@ app.post('/sms', (request, response) => {
   // };
   // console.log('req', req.body.Body); // parse for cmd and args
 
-  let reqArray = req.body.Body.split(','); // space or comma?
+  let reqArray = request.body.Body.split(','); // space or comma?
   let argsArray = reqArray.map(arg => {
     return arg.toLowerCase().trim();
   });
@@ -87,7 +87,8 @@ app.post('/sms', (request, response) => {
         } else {
           console.log('Message sent.');
           console.log('RES.BODY', res.body);
-          if (typeof res.body.data !== 'undefined') {
+          // TODO format response by method called
+          if (reqArray[1] === 'rates' || typeof res.body.data !== 'undefined') {
             twiml.message(
               `$${parseFloat(res.body.data.rateUsd, 10).toFixed(2)}`,
             );
@@ -101,14 +102,15 @@ app.post('/sms', (request, response) => {
       break;
 
     case 'shapeshift':
-      shapeshift(reqArray, (err, res) => {
+      shapeshift(argsArray, (err, res) => {
         if (err) {
           console.log('Error calling shapeshift ' + err);
         } else {
-          console.log('Message sent.');
-          console.log('RES.BODY', res.body);
-          console.log('JSON.STRINGIFY(RES.BODY)', JSON.stringify(res.body));
-          twiml.message(JSON.stringify(res.body));
+          // console.log('Message sent.');
+          // console.log('RES.BODY', res.body);
+          // console.log('JSON.STRINGIFY(RES.BODY)', JSON.stringify(res.body));
+          // twiml.message(JSON.stringify(res.body));
+          twiml.message(res);
           respond(twiml, response);
         }
       });
@@ -135,9 +137,9 @@ app.post('/sms', (request, response) => {
   }
 });
 
-app.post('/meerkat', (req, res) => {
-  console.log('REQ', req.headers);
-  console.log(req.body); // not showing - empty object
+app.get('/meerkat', (req, res) => {
+  // console.log('REQ', req.headers);
+  console.log(req); // not showing - empty object
   res.sendStatus(200);
 });
 

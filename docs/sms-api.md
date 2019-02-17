@@ -16,6 +16,16 @@ command, [rates], [bitcoin, ethereum, eos]
 
 --- Future ---
 
+### Shapeshift
+
+`shapeshift, shift, <address>, pair`
+
+ex: shapeshift, shift, <address>, BTC_LTC
+
+`shapeshift, sendamount, <address>, pair, depositAmount`
+
+ex: shapeshift, sendamount, <address>, BTC_LTC, .1
+
 ### Poa xDai
 
 `xdai, function, toAddress, value`
