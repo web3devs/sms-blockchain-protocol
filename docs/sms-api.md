@@ -12,7 +12,7 @@ command, message
 
 `coincap, rates, bitcoin`
 
-command, [rates, exchanges, assets], [bitcoin, ethereum, XRP, lightcoin, EOS, ...]
+command, [rates], [bitcoin, ethereum, eos]
 
 --- Future ---
 

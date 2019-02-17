@@ -84,10 +84,14 @@ app.post('/sms', (request, response) => {
         } else {
           console.log('Message sent.');
           console.log('RES.BODY', res.body);
-          // console.log('RES.BODY.TOSTRING()', res.body.toString());
-          // console.log(`${res.body}`);
-          console.log('JSON.STRINGIFY(RES.BODY)', JSON.stringify(res.body));
-          twiml.message(JSON.stringify(res.body));
+          if (typeof res.body.data !== 'undefined') {
+            twiml.message(
+              `$${parseFloat(res.body.data.rateUsd, 10).toFixed(2)}`,
+            );
+          } else {
+            twiml.message(`Your request didn't match the API`);
+          }
+
           respond(twiml, response);
         }
       });
