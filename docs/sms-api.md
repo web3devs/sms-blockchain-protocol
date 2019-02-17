@@ -8,13 +8,11 @@ Text messages are sent to the phone number for the server. The format is CSV.
 
 command, message
 
-### Coincap (bounty)
+### Coincap (Shapeshift bounty)
 
 `coincap, rates, bitcoin`
 
 command, [rates], [bitcoin, ethereum, eos]
-
---- Future ---
 
 ### Shapeshift
 
@@ -26,11 +24,13 @@ ex: shapeshift, shift, <address>, BTC_LTC
 
 ex: shapeshift, sendamount, <address>, BTC_LTC, .1
 
-### Poa xDai
+### Balance (Poa xDai bounty)
 
-`xdai, function, toAddress, value`
+`balance, buffidai`
 
-command, arg, function, arg
+command, [xdai, buffidai, null]
+
+--- Future ---
 
 ### Ethereum
 

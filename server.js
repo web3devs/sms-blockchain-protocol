@@ -5,6 +5,7 @@ const bodyParser = require('body-parser');
 require('dotenv').config();
 
 // const grid = require('./grid');
+const balance = require('./balance');
 const msgConf = require('./msgConf');
 const tweet = require('./tweet');
 const coincap = require('./coincap');
@@ -25,7 +26,7 @@ app.post('/sms', (request, response) => {
 
   // request
   console.log(request.headers);
-  // console.log(req.body);
+  console.log(request.body);
 
   // let user = db.find({ phoneNumber: req.body.From });
   // let user = {
@@ -52,7 +53,7 @@ app.post('/sms', (request, response) => {
 
     case 'tweet':
       // use tweet contract
-      tweet(reqArray, (err, res) => {
+      tweet(argsArray, (err, res) => {
         if (err) {
           console.log('Error calling tweet function ' + err);
           msgConf(req, err, res);
@@ -62,7 +63,7 @@ app.post('/sms', (request, response) => {
 
           // twiml.message('Tweet sent!' + res); // does not work
           // respond(twiml, response);
-          msgConf(req, err, res); // takes the place of twiml.message()
+          msgConf(request.body, err, res); // takes the place of twiml.message()
         }
       });
       break;
@@ -81,7 +82,7 @@ app.post('/sms', (request, response) => {
       break;
 
     case 'coincap':
-      coincap(reqArray, (err, res) => {
+      coincap(argsArray, (err, res) => {
         if (err) {
           console.log('Error calling coincap ' + err);
         } else {
@@ -116,20 +117,45 @@ app.post('/sms', (request, response) => {
       });
       break;
 
-    // case 'ethql':
-
-    case 'xdai':
-      // can send funds or call contract functions
-      xdaiSend(reqArray, user, (err, res) => {
+    case 'balance':
+      balance(argsArray, (err, res) => {
         if (err) {
-          console.log('Error sending xdai ' + err);
+          console.log('Error calling blockscout ' + err);
         } else {
-          console.log('xDai sent!');
-          console.log('res', res);
-          twiml.message(res);
+          console.log('Message sent.');
+          console.log('RES.BODY', res.body);
+          if (typeof res.body.result === 'string') {
+            twiml.message(`${res.body.result / 10 ** 18}`);
+          } else if (typeof res.body.result === 'object') {
+            twiml.message(
+              `${res.body.result[0].balance /
+                10 ** res.body.result[0].decimals} ${res.body.result[0].name}`,
+            );
+          } else {
+            twiml.message(
+              `Your request didn't match the API: ${typeof res.body.result}`,
+            );
+          }
+
+          respond(twiml, response);
         }
       });
       break;
+
+    // case 'ethql':
+
+    // case 'xdai':
+    //   // can send funds or call contract functions
+    //   xdaiSend(reqArray, user, (err, res) => {
+    //     if (err) {
+    //       console.log('Error sending xdai ' + err);
+    //     } else {
+    //       console.log('xDai sent!');
+    //       console.log('res', res);
+    //       twiml.message(res);
+    //     }
+    //   });
+    //   break;
 
     default:
       twiml.message('Error. First word must be a command.');
