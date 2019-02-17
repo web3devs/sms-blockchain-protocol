@@ -2,6 +2,7 @@ const http = require('http');
 const express = require('express');
 const MessagingResponse = require('twilio').twiml.MessagingResponse;
 const bodyParser = require('body-parser');
+const readLighthouse = require('./rhombus');
 require('dotenv').config();
 
 // const grid = require('./grid');
@@ -20,6 +21,17 @@ function respond(twiml, res) {
   res.writeHead(200, { 'Content-Type': 'text/xml' });
   res.end(twiml.toString());
 }
+
+function readLighthouse(err, res) => {
+  if (err) {
+    console.log('RES', res);
+    console.log('ERR', err);
+    cb(err, res);
+  } else {
+    console.log('RES.BODY', res.body);
+  }
+}
+
 
 app.post('/sms', (request, response) => {
   // let req = request.body;
