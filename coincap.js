@@ -13,14 +13,14 @@ const request = require('superagent');
  * https://docs.coincap.io/
  */
 function coincap(req, cb) {
-  // req = [coincap, path, id, path2]  id = currency
-  // requests without id return arrays too long to SMS. Need to map one k:v
-  // let url = req[3]
-  //   ? `api.coincap.io/v2/${req[1]}/${req[2]}/${req[3]}`
-  //   : `api.coincap.io/v2/${req[1]}/${req[2]}`;
+  if (req[1] != 'assets' && req[1] != 'rates' && req[1] != 'exchanges') {
+    cb('Method not accepted', null);
+  }
   let url = '';
   if (req[3]) {
     url = `coincap.io/${req[1]}/${req[2]}/${req[3]}`;
+    // api.coincap.io/v2/assets/bitcoin/history?interval=d1
+    // api.coincap.io/v2/assets/bitcoin/markets
     request.get(url).end((err, res) => {
       if (err) {
         console.log('RES', res);
@@ -35,6 +35,9 @@ function coincap(req, cb) {
     });
   } else if (req[2]) {
     url = `coincap.io/${req[1]}/${req[2]}`;
+    // api.coincap.io/v2/assets/bitcoin
+    // api.coincap.io/v2/rates/bitcoin
+    // api.coincap.io/v2/exchanges/kraken
     request.get(url).end((err, res) => {
       if (err) {
         console.log('RES', res);
@@ -42,13 +45,23 @@ function coincap(req, cb) {
         cb(err, res);
       } else {
         console.log('RES.BODY', res.body);
-        let message = '';
-
+        // if (reqArray[1] === 'assets' && typeof res.body.data !== 'undefined') {
+        //   let message = `$${parseFloat(res.body.data.rateUsd, 10).toFixed(2)}`
+        // }
+        if (reqArray[1] === 'rates' && typeof res.body.data !== 'undefined') {
+          let message = `$${parseFloat(res.body.data.rateUsd, 10).toFixed(2)}`
+        }
+        // if (reqArray[1] === 'exchanges' && typeof res.body.data !== 'undefined') {
+        //   let message = `$${parseFloat(res.body.data.rateUsd, 10).toFixed(2)}`
+        // }
         cb(null, message);
       }
     });
-  } else if (req[1]) {
+  } else {
     url = `coincap.io/${req[1]}`;
+    // api.coincap.io/v2/assets
+    // api.coincap.io/v2/rates
+    // api.coincap.io/v2/exchanges
     request.get(url).end((err, res) => {
       if (err) {
         console.log('RES', res);
@@ -56,7 +69,8 @@ function coincap(req, cb) {
         cb(err, res);
       } else {
         console.log('RES.BODY', res.body);
-
+        // long array. grab one key:value and return in pages
+        let
         let message = '';
 
         cb(null, message);
