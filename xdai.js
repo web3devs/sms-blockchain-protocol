@@ -21,7 +21,7 @@ const xdai = {
         cb(err, res);
       } else {
         console.log('RES', res);
-        cb(null, web3.fromWei('' + res, 'ether'));
+        cb(null, xdaiWeb3.fromWei('' + res, 'ether'));
       }
     });
   },
@@ -47,7 +47,7 @@ const xdai = {
     tx.sign(privateKey);
     const serializedTx = tx.serialize();
 
-    web3.eth.sendRawTransaction('0x' + serializedTx.toString('hex'), cb);
+    xdaiWeb3.eth.sendRawTransaction('0x' + serializedTx.toString('hex'), cb);
   },
 };
 module.exports = xdai;

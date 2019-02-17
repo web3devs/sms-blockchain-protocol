@@ -1,11 +1,8 @@
 // get Web3 for rinkeby
-// const getWeb3 = require('./getWeb3');
 const Web3 = require('web3');
 
 const EthereumTx = require('ethereumjs-tx');
 
-// let Web3 = getWeb3('https://rinkeby.infura.io');
-// let web3 = new Web3
 const web3 = new Web3(
   new Web3.providers.HttpProvider('https://rinkeby.infura.io'),
 );

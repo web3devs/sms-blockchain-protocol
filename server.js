@@ -1,8 +1,8 @@
+require('dotenv').config();
 const http = require('http');
 const express = require('express');
 const MessagingResponse = require('twilio').twiml.MessagingResponse;
 const bodyParser = require('body-parser');
-require('dotenv').config();
 
 const tweet = require('./tweet');
 const msgConf = require('./msgConf');
@@ -11,6 +11,8 @@ const coincap = require('./coincap');
 const shapeshift = require('./shapeshift');
 const balance = require('./balance');
 const xdai = require('./xdai');
+// const db = require('./db'); // comment out if not running MongoDB
+// const User = require('./model.user'); // comment out if not running MongoDB
 
 const app = express();
 
@@ -69,32 +71,30 @@ app.post('/sms', (request, response) => {
 
     case 'rhombus':
       // subscribe on unsubscribe to oracles - needs to forward data on
-      readLighthouse((err, res) => {
-        if (err) {
-          console.log('Error calling rhombus function ' + err);
-          twiml.message('Error: ', err);
-        } else {
-          // console.log('Message sent.');
-          twiml.message(res);
-          respond(twiml, response);
-        }
-      });
+      if (argsArray[1] === 'lighthouse') {
+        // TODO rename functions and contracts
+        readLighthouse((err, res) => {
+          if (err) {
+            console.log('Error calling rhombus function ' + err);
+            twiml.message('Error: ', err);
+          } else {
+            // console.log('Message sent.');
+            twiml.message(res);
+            respond(twiml, response);
+          }
+        });
+      }
       break;
 
     case 'coincap':
       coincap(argsArray, (err, res) => {
         if (err) {
           console.log('Error calling coincap ' + err);
+          twiml.message(err);
+          respond(twiml, response);
         } else {
           console.log('Message sent.');
-          // TODO format response by method called
-          if (reqArray[1] === 'rates' || typeof res.body.data !== 'undefined') {
-            twiml.message(
-              `$${parseFloat(res.body.data.rateUsd, 10).toFixed(2)}`,
-            );
-          } else {
-            twiml.message(`Your request didn't match the API`);
-          }
+          twiml.message(res);
           respond(twiml, response);
         }
       });
@@ -104,6 +104,8 @@ app.post('/sms', (request, response) => {
       shapeshift(argsArray, (err, res) => {
         if (err) {
           console.log('Error calling shapeshift ' + err);
+          twiml.message(err);
+          respond(twiml, response);
         } else {
           twiml.message(res);
           respond(twiml, response);

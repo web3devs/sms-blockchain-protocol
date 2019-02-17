@@ -12,13 +12,18 @@ const request = require('superagent');
  * api.coincap.io/v2/exchanges/kraken
  * https://docs.coincap.io/
  */
-function coincap(req, cb) {
-  if (req[1] != 'assets' && req[1] != 'rates' && req[1] != 'exchanges') {
+function coincap(reqArray, cb) {
+  console.log('REQARRAY', reqArray);
+  if (
+    reqArray[1] != 'assets' &&
+    reqArray[1] != 'rates' &&
+    reqArray[1] != 'exchanges'
+  ) {
     cb('Method not accepted', null);
   }
   let url = '';
-  if (req[3]) {
-    url = `coincap.io/${req[1]}/${req[2]}/${req[3]}`;
+  if (reqArray[3]) {
+    url = `api.coincap.io/v2/${reqArray[1]}/${reqArray[2]}/${reqArray[3]}`;
     // api.coincap.io/v2/assets/bitcoin/history?interval=d1
     // api.coincap.io/v2/assets/bitcoin/markets
     request.get(url).end((err, res) => {
@@ -33,8 +38,8 @@ function coincap(req, cb) {
         cb(null, message);
       }
     });
-  } else if (req[2]) {
-    url = `coincap.io/${req[1]}/${req[2]}`;
+  } else if (reqArray[2]) {
+    url = `api.coincap.io/v2/${reqArray[1]}/${reqArray[2]}`;
     // api.coincap.io/v2/assets/bitcoin
     // api.coincap.io/v2/rates/bitcoin
     // api.coincap.io/v2/exchanges/kraken
@@ -45,20 +50,12 @@ function coincap(req, cb) {
         cb(err, res);
       } else {
         console.log('RES.BODY', res.body);
-        // if (reqArray[1] === 'assets' && typeof res.body.data !== 'undefined') {
-        //   let message = `$${parseFloat(res.body.data.rateUsd, 10).toFixed(2)}`
-        // }
-        if (reqArray[1] === 'rates' && typeof res.body.data !== 'undefined') {
-          let message = `$${parseFloat(res.body.data.rateUsd, 10).toFixed(2)}`;
-        }
-        // if (reqArray[1] === 'exchanges' && typeof res.body.data !== 'undefined') {
-        //   let message = `$${parseFloat(res.body.data.rateUsd, 10).toFixed(2)}`
-        // }
+        let message = JSON.stringify(res.body.data, null, 2);
         cb(null, message);
       }
     });
   } else {
-    url = `coincap.io/${req[1]}`;
+    url = `api.coincap.io/v2/${reqArray[1]}`;
     // api.coincap.io/v2/assets
     // api.coincap.io/v2/rates
     // api.coincap.io/v2/exchanges
