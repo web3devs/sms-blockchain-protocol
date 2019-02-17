@@ -1,15 +1,18 @@
+require('dotenv').config();
 const http = require('http');
 const express = require('express');
 const MessagingResponse = require('twilio').twiml.MessagingResponse;
 const bodyParser = require('body-parser');
-require('dotenv').config();
 
-// const grid = require('./grid');
-const balance = require('./balance');
-const msgConf = require('./msgConf');
 const tweet = require('./tweet');
+const msgConf = require('./msgConf');
+const readLighthouse = require('./rhombus');
 const coincap = require('./coincap');
 const shapeshift = require('./shapeshift');
+const balance = require('./balance');
+const xdai = require('./xdai');
+// const db = require('./db'); // comment out if not running MongoDB
+// const User = require('./model.user'); // comment out if not running MongoDB
 
 const app = express();
 
@@ -22,8 +25,6 @@ function respond(twiml, res) {
 }
 
 app.post('/sms', (request, response) => {
-  // let req = request.body;
-
   // request
   console.log(request.headers);
   console.log(request.body);
@@ -70,33 +71,30 @@ app.post('/sms', (request, response) => {
 
     case 'rhombus':
       // subscribe on unsubscribe to oracles - needs to forward data on
-      rhombus(reqArray, (err, res) => {
-        if (err) {
-          console.log('Error calling tweet function ' + err);
-          twiml.message('Error: ', err);
-        } else {
-          // console.log('Message sent.');
-          twiml.message(res);
-        }
-      });
+      if (argsArray[1] === 'lighthouse') {
+        // TODO rename functions and contracts
+        readLighthouse((err, res) => {
+          if (err) {
+            console.log('Error calling rhombus function ' + err);
+            twiml.message('Error: ', err);
+          } else {
+            // console.log('Message sent.');
+            twiml.message(res);
+            respond(twiml, response);
+          }
+        });
+      }
       break;
 
     case 'coincap':
       coincap(argsArray, (err, res) => {
         if (err) {
           console.log('Error calling coincap ' + err);
+          twiml.message(err);
+          respond(twiml, response);
         } else {
           console.log('Message sent.');
-          console.log('RES.BODY', res.body);
-          // TODO format response by method called
-          if (reqArray[1] === 'rates' || typeof res.body.data !== 'undefined') {
-            twiml.message(
-              `$${parseFloat(res.body.data.rateUsd, 10).toFixed(2)}`,
-            );
-          } else {
-            twiml.message(`Your request didn't match the API`);
-          }
-
+          twiml.message(res);
           respond(twiml, response);
         }
       });
@@ -106,11 +104,9 @@ app.post('/sms', (request, response) => {
       shapeshift(argsArray, (err, res) => {
         if (err) {
           console.log('Error calling shapeshift ' + err);
+          twiml.message(err);
+          respond(twiml, response);
         } else {
-          // console.log('Message sent.');
-          // console.log('RES.BODY', res.body);
-          // console.log('JSON.STRINGIFY(RES.BODY)', JSON.stringify(res.body));
-          // twiml.message(JSON.stringify(res.body));
           twiml.message(res);
           respond(twiml, response);
         }
@@ -142,20 +138,34 @@ app.post('/sms', (request, response) => {
       });
       break;
 
-    // case 'ethql':
-
-    // case 'xdai':
-    //   // can send funds or call contract functions
-    //   xdaiSend(reqArray, user, (err, res) => {
-    //     if (err) {
-    //       console.log('Error sending xdai ' + err);
-    //     } else {
-    //       console.log('xDai sent!');
-    //       console.log('res', res);
-    //       twiml.message(res);
-    //     }
-    //   });
-    //   break;
+    case 'xdai':
+      // getUser()
+      // can send funds or check balance
+      if (argsArray[1] === 'getbalance') {
+        xdai.getBalance(argsArray[2], (err, res) => {
+          if (err) {
+            console.log('RES', res);
+            console.log('ERR', err);
+            // twiml.message(err);
+          } else {
+            let message = `$${res} xDai`;
+            twiml.message(message);
+            respond(twiml, response);
+          }
+        });
+      }
+      if (argsArray[1] === 'send') {
+        xdai.send(reqArray, user, (err, res) => {
+          if (err) {
+            console.log('Error sending xdai ' + err);
+          } else {
+            console.log('xDai sent!');
+            console.log('res', res);
+            twiml.message(res);
+          }
+        });
+      }
+      break;
 
     default:
       twiml.message('Error. First word must be a command.');

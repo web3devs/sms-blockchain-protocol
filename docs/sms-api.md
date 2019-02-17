@@ -10,30 +10,44 @@ command, message
 
 ### Coincap (Shapeshift bounty)
 
-`coincap, rates, bitcoin`
+command, [assets, rates, exchanges], <currency>
 
-command, [rates], [bitcoin, ethereum, eos]
+ex: `coincap, rates, bitcoin`
+
+ex: `coincap, assets, ethereum`
 
 ### Shapeshift
 
-`shapeshift, shift, <address>, pair`
+shapeshift, shift, <address>, pair
 
-ex: shapeshift, shift, <address>, BTC_LTC
+ex: `shapeshift, shift, <address>, BTC_LTC`
 
-`shapeshift, sendamount, <address>, pair, depositAmount`
+shapeshift, sendamount, <address>, pair, depositAmount
 
-ex: shapeshift, sendamount, <address>, BTC_LTC, .1
+ex: `shapeshift, sendamount, <address>, BTC_LTC, .1`
 
 ### Balance (Poa xDai bounty)
 
+command, [xdai, buffidai, null]
+
 `balance, buffidai`
 
-command, [xdai, buffidai, null]
+### xDai
+
+`xdai, getBalance, <address>`
+
+### Rhombus
+
+command, oracle
+
+`rhombus, lighthouse, peekdata`
+
+---
 
 --- Future ---
 
 ### Ethereum
 
-`eth, contract 1, tweet, message`
-
 command, contract, function, arg
+
+`eth, tweet, tweet, message`
