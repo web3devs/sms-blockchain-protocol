@@ -30,6 +30,10 @@ ex: shapeshift, sendamount, <address>, BTC_LTC, .1
 
 command, [xdai, buffidai, null]
 
+### xDai
+
+`xdai, getBalance, <address>`
+
 --- Future ---
 
 ### Ethereum

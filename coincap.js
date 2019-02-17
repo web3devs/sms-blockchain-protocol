@@ -49,7 +49,7 @@ function coincap(req, cb) {
         //   let message = `$${parseFloat(res.body.data.rateUsd, 10).toFixed(2)}`
         // }
         if (reqArray[1] === 'rates' && typeof res.body.data !== 'undefined') {
-          let message = `$${parseFloat(res.body.data.rateUsd, 10).toFixed(2)}`
+          let message = `$${parseFloat(res.body.data.rateUsd, 10).toFixed(2)}`;
         }
         // if (reqArray[1] === 'exchanges' && typeof res.body.data !== 'undefined') {
         //   let message = `$${parseFloat(res.body.data.rateUsd, 10).toFixed(2)}`
@@ -70,8 +70,8 @@ function coincap(req, cb) {
       } else {
         console.log('RES.BODY', res.body);
         // long array. grab one key:value and return in pages
-        let
-        let message = '';
+
+        // let message = '';
 
         cb(null, message);
       }
