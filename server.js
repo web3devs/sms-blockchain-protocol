@@ -53,7 +53,7 @@ app.post('/sms', (request, response) => {
 
     case 'tweet':
       // use tweet contract
-      tweet(reqArray, (err, res) => {
+      tweet(argsArray, (err, res) => {
         if (err) {
           console.log('Error calling tweet function ' + err);
           msgConf(req, err, res);
@@ -63,7 +63,7 @@ app.post('/sms', (request, response) => {
 
           // twiml.message('Tweet sent!' + res); // does not work
           // respond(twiml, response);
-          msgConf(req, err, res); // takes the place of twiml.message()
+          msgConf(request.body, err, res); // takes the place of twiml.message()
         }
       });
       break;
@@ -82,13 +82,14 @@ app.post('/sms', (request, response) => {
       break;
 
     case 'coincap':
-      coincap(reqArray, (err, res) => {
+      coincap(argsArray, (err, res) => {
         if (err) {
           console.log('Error calling coincap ' + err);
         } else {
           console.log('Message sent.');
           console.log('RES.BODY', res.body);
-          if (typeof res.body.data !== 'undefined') {
+          // TODO format response by method called
+          if (reqArray[1] === 'rates' || typeof res.body.data !== 'undefined') {
             twiml.message(
               `$${parseFloat(res.body.data.rateUsd, 10).toFixed(2)}`,
             );
@@ -102,14 +103,15 @@ app.post('/sms', (request, response) => {
       break;
 
     case 'shapeshift':
-      shapeshift(reqArray, (err, res) => {
+      shapeshift(argsArray, (err, res) => {
         if (err) {
           console.log('Error calling shapeshift ' + err);
         } else {
-          console.log('Message sent.');
-          console.log('RES.BODY', res.body);
-          console.log('JSON.STRINGIFY(RES.BODY)', JSON.stringify(res.body));
-          twiml.message(JSON.stringify(res.body));
+          // console.log('Message sent.');
+          // console.log('RES.BODY', res.body);
+          // console.log('JSON.STRINGIFY(RES.BODY)', JSON.stringify(res.body));
+          // twiml.message(JSON.stringify(res.body));
+          twiml.message(res);
           respond(twiml, response);
         }
       });
@@ -161,9 +163,9 @@ app.post('/sms', (request, response) => {
   }
 });
 
-app.post('/meerkat', (req, res) => {
-  console.log('REQ', req.headers);
-  console.log(req.body); // not showing - empty object
+app.get('/meerkat', (req, res) => {
+  // console.log('REQ', req.headers);
+  console.log(req); // not showing - empty object
   res.sendStatus(200);
 });
 

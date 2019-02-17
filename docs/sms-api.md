@@ -14,6 +14,16 @@ command, message
 
 command, [rates], [bitcoin, ethereum, eos]
 
+### Shapeshift
+
+`shapeshift, shift, <address>, pair`
+
+ex: shapeshift, shift, <address>, BTC_LTC
+
+`shapeshift, sendamount, <address>, pair, depositAmount`
+
+ex: shapeshift, sendamount, <address>, BTC_LTC, .1
+
 ### Balance (Poa xDai bounty)
 
 `balance, buffidai`
