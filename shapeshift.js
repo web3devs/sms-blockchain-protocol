@@ -5,16 +5,22 @@ const request = require('superagent');
  * https://docs.shapeshift.io/
  */
 function shapeshift(req, cb) {
-  // req = [shapeshift, method, arg1]
-  let url = req[3]
-    ? `shapeshift.io/v2/${req[1]}/${req[2]}/${req[3]}`
-    : `shapeshift.io/v2/${req[1]}/${req[2]}`;
+  // req = [shapeshift, method, arg1, arg2]
+  let url = '';
+  if (req[3]) {
+    url = `shapeshift.io/${req[1]}/${req[2]}/${req[3]}`;
+  } else if (req[2]) {
+    url = `shapeshift.io/${req[1]}/${req[2]}`;
+  } else if (req[1]) {
+    url = `shapeshift.io/${req[1]}`;
+  }
 
   if (req[1] === 'shift' || req[1] === 'sendamount') {
     request
       .post(url)
       .send({})
-      .set('Content type', 'application/json')
+      // .set('Content type', 'application/json')
+      .set('Accept', 'application/json')
       .set(
         'Authorization',
         'Bearer 9uvGiMgjmCMPt9ZoL6jXw3mznHqYQ1dwYXhd5EoQbxnN',
@@ -23,7 +29,7 @@ function shapeshift(req, cb) {
   } else {
     request
       .get(url)
-      .set('Content type', 'application/json')
+      .set('Accept', 'application/json')
       // .set('Authorization', 'Bearer 9uvGiMgjmCMPt9ZoL6jXw3mznHqYQ1dwYXhd5EoQbxnN')
       .end(cb);
   }

@@ -6,6 +6,7 @@ require('dotenv').config();
 
 const tweet = require('./tweet');
 const coincap = require('./coincap');
+const shapeshift = require('./shapeshift');
 
 const app = express();
 
@@ -22,17 +23,19 @@ app.post('/sms', (req, response) => {
   console.log(req.headers);
   // console.log(req.body);
   // let user = db.find({ phoneNumber: req.body.From });
-  let user = {
-    // hard code for now
-    rinkebyAddress: '0xb37A07ffcd1ec4FBc77583CC176e0809b40ff710',
-    xdaiAddress: '',
-    btcAddress: '',
-  };
+  // let user = {
+  //   // hard code for now
+  //   rinkebyAddress: '0xb37A07ffcd1ec4FBc77583CC176e0809b40ff710',
+  //   xdaiAddress: '',
+  //   btcAddress: '',
+  // };
   // console.log('req', req.body.Body); // parse for cmd and args
 
   let reqArray = req.body.Body.split(','); // space or comma?
-
-  let command = reqArray[0];
+  let argsArray = reqArray.map(arg => {
+    return arg.toLowerCase().trim();
+  });
+  let command = argsArray[0];
 
   const twiml = new MessagingResponse();
 
@@ -74,12 +77,10 @@ app.post('/sms', (req, response) => {
     case 'coincap':
       coincap(reqArray, (err, res) => {
         if (err) {
-          console.log('Error calling tweet function ' + err);
+          console.log('Error calling coincap ' + err);
         } else {
           console.log('Message sent.');
           console.log('RES.BODY', res.body);
-          // console.log('RES.BODY.TOSTRING()', res.body.toString());
-          // console.log(`${res.body}`);
           console.log('JSON.STRINGIFY(RES.BODY)', JSON.stringify(res.body));
           twiml.message(JSON.stringify(res.body));
           respond(twiml, response);
@@ -87,7 +88,19 @@ app.post('/sms', (req, response) => {
       });
       break;
 
-    // case 'shapeshift':
+    case 'shapeshift':
+      shapeshift(reqArray, (err, res) => {
+        if (err) {
+          console.log('Error calling shapeshift ' + err);
+        } else {
+          console.log('Message sent.');
+          console.log('RES.BODY', res.body);
+          console.log('JSON.STRINGIFY(RES.BODY)', JSON.stringify(res.body));
+          twiml.message(JSON.stringify(res.body));
+          respond(twiml, response);
+        }
+      });
+      break;
 
     // case 'ethql':
 
