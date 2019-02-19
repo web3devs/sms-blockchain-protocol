@@ -11,16 +11,16 @@ function msgConf(req, err, res) {
         body: `error: ${err}`,
         // to: '+12092104311',
         to: req.From,
-        from: '+12399323767',
+        from: '+15735355365',
       })
       .then(message => console.log(message.sid));
   } else {
     client.messages
       .create({
-        body: `https://rinkeby.etherscan.io/tx/${res}`,
+        body: `https://rinkeby.etherscan.io/tx/${res}#events`,
         // to: '+12092104311',
         to: req.From,
-        from: '+12399323767',
+        from: '+15735355365',
       })
       .then(message => console.log(message.sid));
   }
