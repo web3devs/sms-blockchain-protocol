@@ -132,7 +132,6 @@ app.post('/sms', (request, response) => {
               `Your request didn't match the API: ${typeof res.body.result}`,
             );
           }
-
           respond(twiml, response);
         }
       });
